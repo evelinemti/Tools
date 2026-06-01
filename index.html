@@ -5,488 +5,171 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The 5th Floor – Social Media Tool</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Aptos:wght@300;400;500;600;700&display=swap');
-
   :root {
-    --teal: #2E7D82;
-    --teal-mid: #3D8E94;
-    --teal-light: #B8D4D6;
-    --black: #1A1A1A;
-    --grey: #E8E8E8;
-    --white: #FFFFFF;
-    --bg: #f4f4f4;
-    --font: 'Aptos', 'Segoe UI', sans-serif;
+    --teal:#2E7D82; --teal-mid:#3D8E94; --teal-light:#B8D4D6;
+    --black:#1A1A1A; --grey:#E8E8E8; --white:#FFFFFF; --bg:#f4f4f4;
+    --font:'Aptos','Segoe UI',sans-serif;
   }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:var(--font);background:var(--bg);color:var(--black);font-size:15px;min-height:100vh;}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  /* TOPBAR */
+  .topbar{background:var(--black);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:12px 24px;position:sticky;top:0;z-index:50;}
+  .topbar-left{display:flex;align-items:center;gap:12px;}
+  .topbar-sub{font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:1.5px;text-transform:uppercase;}
+  .topbar-slogan{font-size:11px;color:rgba(255,255,255,0.22);letter-spacing:1px;}
 
-  body {
-    font-family: var(--font);
-    background: var(--bg);
-    color: var(--black);
-    font-size: 15px;
-    min-height: 100vh;
-  }
+  /* MAIN TABS */
+  .main-tabs{background:var(--white);border-bottom:2px solid var(--grey);display:flex;padding:0 24px;}
+  .main-tab{padding:13px 22px;font-size:13px;font-weight:600;cursor:pointer;border:none;border-bottom:3px solid transparent;background:none;color:#888;font-family:var(--font);transition:all .15s;margin-bottom:-2px;}
+  .main-tab:hover{color:var(--black);}
+  .main-tab.active{color:var(--teal);border-bottom-color:var(--teal);}
 
-  /* ── TOPBAR ── */
-  .topbar {
-    background: var(--black);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 24px;
-    position: sticky;
-    top: 0;
-    z-index: 50;
-  }
-  .topbar-left { display: flex; align-items: center; gap: 12px; }
-  .logo-pill {
-    border: 1.5px solid rgba(255,255,255,0.3);
-    border-radius: 100px;
-    padding: 4px 16px;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: #fff;
-  }
-  .logo-pill span { color: var(--teal-light); }
-  .topbar-sub { font-size: 11px; color: rgba(255,255,255,0.35); letter-spacing: 1.5px; text-transform: uppercase; }
-  .topbar-right { display: flex; align-items: center; gap: 10px; }
-  .api-status {
-    font-size: 11px;
-    padding: 4px 12px;
-    border-radius: 100px;
-    font-weight: 600;
-    letter-spacing: .5px;
-  }
-  .api-status.ok { background: rgba(46,125,130,0.3); color: var(--teal-light); }
-  .api-status.missing { background: rgba(255,100,100,0.2); color: #ff9999; }
-  .btn-key {
-    font-size: 12px;
-    padding: 5px 14px;
-    border-radius: 100px;
-    border: 1px solid rgba(255,255,255,0.2);
-    background: none;
-    color: rgba(255,255,255,0.7);
-    cursor: pointer;
-    font-family: var(--font);
-    transition: all .15s;
-  }
-  .btn-key:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
+  /* CHANNEL TABS (inside calendar) */
+  .channel-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+  .channel-tabs{display:flex;gap:6px;}
+  .ch-tab{padding:7px 18px;font-size:12px;font-weight:600;cursor:pointer;border-radius:100px;border:1.5px solid #ddd;background:var(--white);color:#888;font-family:var(--font);transition:all .15s;}
+  .ch-tab:hover{border-color:var(--teal);color:var(--teal);}
+  .ch-tab.active{background:var(--teal);color:#fff;border-color:var(--teal);}
+  .ch-tab.active.li{background:var(--black);border-color:var(--black);}
+  .ch-tab.active.ig{background:#C13584;border-color:#C13584;}
+  .ch-tab.active.nl{background:var(--teal-mid);border-color:var(--teal-mid);}
 
-  /* ── TABS ── */
-  .tabs {
-    background: var(--white);
-    border-bottom: 1px solid var(--grey);
-    display: flex;
-    padding: 0 24px;
-  }
-  .tab {
-    padding: 13px 20px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    border: none;
-    border-bottom: 2px solid transparent;
-    background: none;
-    color: #777;
-    font-family: var(--font);
-    transition: all .15s;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-  .tab:hover { color: var(--black); }
-  .tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+  /* MONTH NAV */
+  .month-nav{display:flex;align-items:center;gap:10px;}
+  .month-label{font-size:15px;font-weight:600;min-width:140px;text-align:center;}
+  .btn-nav{padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;border-radius:8px;border:1px solid #ddd;background:var(--white);color:var(--black);font-family:var(--font);transition:background .12s;}
+  .btn-nav:hover{background:var(--bg);}
 
-  /* ── LAYOUT ── */
-  .page { max-width: 1100px; margin: 0 auto; padding: 28px 24px; }
-  .view { display: none; }
-  .view.active { display: block; }
+  /* MONTH GRID */
+  .month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+  .dow-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);text-align:center;padding:6px 0;border-bottom:2px solid var(--teal-light);margin-bottom:4px;}
+  .day-cell{min-height:90px;background:var(--white);border-radius:10px;border:1px solid #eee;padding:8px;cursor:pointer;transition:box-shadow .12s;position:relative;}
+  .day-cell:hover{box-shadow:0 2px 10px rgba(0,0,0,.08);}
+  .day-cell.today{border-color:var(--teal);border-width:2px;}
+  .day-cell.other-month{background:#fafafa;opacity:.5;}
+  .day-cell.empty{background:transparent;border:none;cursor:default;}
+  .day-num{font-size:11px;font-weight:700;color:#aaa;margin-bottom:5px;}
+  .day-cell.today .day-num{color:var(--teal);}
+  .post-chip{border-radius:5px;padding:3px 7px;font-size:10px;font-weight:600;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:grab;}
+  .post-chip.dragging{opacity:.4;cursor:grabbing;}
+  .day-cell.drag-over{background:#e8f4f5;border-color:var(--teal);border-style:dashed;}
+  .chip-li{background:#e8e8e8;color:var(--black);}
+  .chip-ig{background:#fce4ec;color:#c2185b;}
+  .chip-nl{background:#e8f4f5;color:var(--teal);}
+  .chip-all{background:#f0f0f0;color:#555;}
+  .more-chip{font-size:10px;color:#aaa;padding:2px 4px;}
+  .add-day-btn{position:absolute;bottom:5px;right:6px;background:none;border:none;font-size:16px;color:#ccc;cursor:pointer;line-height:1;font-family:var(--font);}
+  .add-day-btn:hover{color:var(--teal);}
 
-  /* ── CARDS ── */
-  .card {
-    background: var(--white);
-    border-radius: 14px;
-    border: 1px solid #eee;
-    padding: 22px;
-  }
-  .card-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-    color: var(--teal);
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
+  /* LAYOUT */
+  .page{max-width:1200px;margin:0 auto;padding:24px;}
+  .view{display:none;}
+  .view.active{display:block;}
 
-  /* ── GENERATOR ── */
-  .gen-grid { display: grid; grid-template-columns: 360px 1fr; gap: 20px; }
+  /* GENERATOR */
+  .card{background:var(--white);border-radius:14px;border:1px solid #eee;padding:22px;}
+  .card-label{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal);margin-bottom:16px;}
+  .gen-grid{display:grid;grid-template-columns:340px 1fr;gap:20px;}
+  .form-row{margin-bottom:14px;}
+  .form-row label{display:block;font-size:12px;font-weight:600;color:#555;margin-bottom:5px;}
+  .form-row select,.form-row textarea,.form-row input[type=text]{width:100%;padding:9px 12px;border:1px solid #ddd;border-radius:8px;font-family:var(--font);font-size:13px;color:var(--black);background:var(--white);outline:none;transition:border-color .15s;}
+  .form-row select:focus,.form-row textarea:focus{border-color:var(--teal);}
+  .form-row textarea{resize:vertical;min-height:75px;}
+  .btn-generate{width:100%;padding:12px;background:var(--teal);color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);letter-spacing:.5px;transition:opacity .15s;}
+  .btn-generate:hover{opacity:.88;}
+  .output-box{min-height:180px;background:var(--bg);border-radius:9px;padding:16px;font-size:14px;line-height:1.8;color:var(--black);white-space:pre-wrap;margin-bottom:10px;border:1px solid #eee;font-family:var(--font);}
+  .char-count{font-size:11px;color:#999;margin-bottom:12px;}
+  .hashtag-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#888;margin-bottom:6px;}
+  .hashtag-box{background:#e8f4f5;border-radius:8px;padding:10px 14px;font-size:13px;color:var(--teal);line-height:1.8;margin-bottom:14px;}
+  .template-note{background:#e8f4f5;border-radius:9px;padding:10px 14px;font-size:12px;color:#2a6a6e;margin-bottom:12px;border-left:3px solid var(--teal);line-height:1.6;}
+  .action-row{display:flex;gap:8px;flex-wrap:wrap;}
+  .btn-sm{padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;border-radius:8px;font-family:var(--font);border:1px solid #ddd;background:var(--white);color:var(--black);transition:background .12s;display:flex;align-items:center;gap:5px;}
+  .btn-sm:hover{background:var(--bg);}
+  .btn-sm.primary{background:var(--teal);color:#fff;border-color:var(--teal);}
+  .btn-sm.primary:hover{opacity:.88;}
 
-  .form-row { margin-bottom: 14px; }
-  .form-row label {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-    color: #555;
-    margin-bottom: 5px;
-    letter-spacing: .3px;
-  }
-  .form-row select,
-  .form-row textarea,
-  .form-row input[type="text"] {
-    width: 100%;
-    padding: 9px 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-family: var(--font);
-    font-size: 13px;
-    color: var(--black);
-    background: var(--white);
-    transition: border-color .15s;
-    outline: none;
-  }
-  .form-row select:focus,
-  .form-row textarea:focus,
-  .form-row input[type="text"]:focus { border-color: var(--teal); }
-  .form-row textarea { resize: vertical; min-height: 75px; }
+  /* MODAL */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:200;}
+  .modal{background:var(--white);border-radius:14px;padding:26px;width:500px;max-width:95vw;max-height:88vh;overflow-y:auto;}
+  .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+  .modal-head h3{font-size:15px;font-weight:600;}
+  .btn-close{background:none;border:none;font-size:22px;cursor:pointer;color:#888;line-height:1;padding:0;}
+  .status-pill{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.5px;padding:2px 9px;border-radius:100px;}
+  .s-draft{background:#f0f0f0;color:#888;}
+  .s-ready{background:#e8f4f5;color:var(--teal);}
+  .s-published{background:#e9f7ef;color:#27ae60;}
 
-  .btn-generate {
-    width: 100%;
-    padding: 12px;
-    background: var(--teal);
-    color: #fff;
-    border: none;
-    border-radius: 9px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: var(--font);
-    letter-spacing: .5px;
-    transition: opacity .15s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-  .btn-generate:hover { opacity: .88; }
-  .btn-generate:disabled { opacity: .45; cursor: not-allowed; }
+  /* TOAST */
+  #toast{position:fixed;bottom:24px;right:24px;background:var(--black);color:#fff;padding:11px 20px;border-radius:9px;font-size:13px;z-index:300;opacity:0;transition:opacity .2s;pointer-events:none;font-family:var(--font);}
+  #toast.show{opacity:1;}
 
-  .output-box {
-    min-height: 160px;
-    background: var(--bg);
-    border-radius: 9px;
-    padding: 16px;
-    font-size: 14px;
-    line-height: 1.75;
-    color: var(--black);
-    white-space: pre-wrap;
-    margin-bottom: 12px;
-    border: 1px solid #eee;
-  }
-  .output-placeholder { color: #aaa; font-style: italic; font-size: 13px; }
-
-  .char-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  .char-count { font-size: 11px; color: #999; }
-  .char-warn { color: #e67e22; font-weight: 600; }
-
-  .hashtag-section { margin-bottom: 14px; }
-  .hashtag-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #888; margin-bottom: 6px; }
-  .hashtag-box {
-    background: #e8f4f5;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 13px;
-    color: var(--teal);
-    line-height: 1.8;
-  }
-
-  .action-row { display: flex; gap: 8px; flex-wrap: wrap; }
-  .btn-sm {
-    padding: 8px 16px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    border-radius: 8px;
-    font-family: var(--font);
-    border: 1px solid #ddd;
-    background: var(--white);
-    color: var(--black);
-    transition: background .12s;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .btn-sm:hover { background: var(--bg); }
-  .btn-sm.primary { background: var(--teal); color: #fff; border-color: var(--teal); }
-  .btn-sm.primary:hover { opacity: .88; }
-
-  /* ── CALENDAR ── */
-  .cal-topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
-  .cal-title { font-size: 16px; font-weight: 600; color: var(--black); }
-  .week-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
-  }
-  .day-head {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--teal);
-    padding-bottom: 8px;
-    border-bottom: 2px solid var(--teal-light);
-    margin-bottom: 10px;
-    line-height: 1.5;
-  }
-  .cal-slot {
-    background: var(--white);
-    border: 1px solid #eee;
-    border-left: 3px solid var(--teal);
-    border-radius: 9px;
-    padding: 11px 12px;
-    margin-bottom: 9px;
-    cursor: pointer;
-    transition: border-color .12s, box-shadow .12s;
-  }
-  .cal-slot:hover { box-shadow: 0 2px 10px rgba(0,0,0,.08); }
-  .cal-slot.linkedin { border-left-color: var(--black); }
-  .cal-slot .sp { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--teal); margin-bottom: 3px; }
-  .cal-slot.linkedin .sp { color: var(--black); }
-  .cal-slot .sf { font-size: 12px; font-weight: 600; color: var(--black); margin-bottom: 3px; }
-  .cal-slot .st { font-size: 11px; color: #888; line-height: 1.45; }
-  .status-pill {
-    display: inline-block;
-    margin-top: 7px;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: .5px;
-    padding: 2px 9px;
-    border-radius: 100px;
-  }
-  .s-draft { background: #f0f0f0; color: #888; }
-  .s-ready { background: #e8f4f5; color: var(--teal); }
-  .s-published { background: #e9f7ef; color: #27ae60; }
-
-  .add-btn {
-    width: 100%;
-    padding: 10px;
-    border: 1.5px dashed #ccc;
-    border-radius: 9px;
-    background: none;
-    cursor: pointer;
-    font-size: 12px;
-    color: #aaa;
-    font-family: var(--font);
-    transition: all .15s;
-  }
-  .add-btn:hover { border-color: var(--teal); color: var(--teal); }
-
-  /* ── MODAL ── */
-  .overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.45);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 200;
-  }
-  .modal {
-    background: var(--white);
-    border-radius: 14px;
-    padding: 26px;
-    width: 500px;
-    max-width: 95vw;
-    max-height: 88vh;
-    overflow-y: auto;
-  }
-  .modal-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 18px;
-  }
-  .modal-head h3 { font-size: 15px; font-weight: 600; }
-  .btn-close {
-    background: none;
-    border: none;
-    font-size: 22px;
-    cursor: pointer;
-    color: #888;
-    line-height: 1;
-    padding: 0;
-  }
-
-  /* ── API KEY MODAL ── */
-  .api-info {
-    background: #e8f4f5;
-    border-radius: 9px;
-    padding: 12px 16px;
-    font-size: 13px;
-    color: #2a6a6e;
-    margin-bottom: 16px;
-    line-height: 1.6;
-  }
-  .api-info a { color: var(--teal); font-weight: 600; }
-
-  /* ── SPINNER ── */
-  .spinner {
-    width: 16px; height: 16px;
-    border: 2px solid rgba(255,255,255,.3);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin .7s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ── TOAST ── */
-  #toast {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    background: var(--black);
-    color: #fff;
-    padding: 11px 20px;
-    border-radius: 9px;
-    font-size: 13px;
-    z-index: 300;
-    opacity: 0;
-    transition: opacity .2s;
-    pointer-events: none;
-    font-family: var(--font);
-  }
-  #toast.show { opacity: 1; }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 700px) {
-    .gen-grid { grid-template-columns: 1fr; }
-    .week-grid { grid-template-columns: 1fr 1fr; }
-    .topbar-sub { display: none; }
+  @media(max-width:750px){
+    .gen-grid{grid-template-columns:1fr;}
+    .month-grid{grid-template-columns:repeat(7,1fr);}
+    .topbar-slogan{display:none;}
+    .day-cell{min-height:60px;}
   }
 </style>
 </head>
 <body>
 
-<!-- TOPBAR -->
 <div class="topbar">
   <div class="topbar-left">
-    <div class="logo-pill">THE <span>5TH</span> FLOOR</div>
+    <img src="data:image/png;base64,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" alt="The 5th Floor" style="height:32px;width:auto;display:block;">
     <div class="topbar-sub">Social Media Tool</div>
   </div>
-  <div class="topbar-right">
-    <span class="api-status missing" id="api-status">Kein API-Key</span>
-    <button class="btn-key" onclick="openKeyModal()">⚙ API-Key</button>
-  </div>
+  <div class="topbar-slogan">BY ENTREPRENEURS, FOR ENTREPRENEURS</div>
 </div>
 
-<!-- TABS -->
-<div class="tabs">
-  <button class="tab active" onclick="switchTab('generator', this)">
-    ✦ Post Generator
-  </button>
-  <button class="tab" onclick="switchTab('calendar', this)">
-    ◫ Redaktionsplan
-  </button>
+<div class="main-tabs">
+  <button class="main-tab active" onclick="switchMain('generator',this)">✦ Post Generator</button>
+  <button class="main-tab" onclick="switchMain('calendar',this)">◫ Redaktionsplan</button>
 </div>
 
 <!-- ── GENERATOR ── -->
 <div id="tab-generator" class="view active">
   <div class="page">
     <div class="gen-grid">
-
-      <!-- Left: Config -->
       <div class="card">
         <div class="card-label">Post konfigurieren</div>
-
-        <div class="form-row">
-          <label>Kanal</label>
-          <select id="platform">
+        <div class="form-row"><label>Kanal</label>
+          <select id="platform" onchange="updateOutput()">
             <option value="linkedin">LinkedIn</option>
             <option value="instagram">Instagram</option>
-            <option value="newsletter">Newsletter</option>
-          </select>
-        </div>
-
-        <div class="form-row">
-          <label>Content-Säule</label>
-          <select id="pillar">
+            
+          </select></div>
+        <div class="form-row"><label>Content-Säule</label>
+          <select id="pillar" onchange="updateOutput()">
             <option value="community">Community & People</option>
             <option value="thought">Thought Leadership</option>
             <option value="space">Space & Infrastructure</option>
             <option value="events">Events & Networking</option>
             <option value="upsell">Offers & Upsell</option>
-          </select>
-        </div>
-
-        <div class="form-row">
-          <label>Sprache</label>
-          <select id="language">
+          </select></div>
+        <div class="form-row"><label>Sprache</label>
+          <select id="language" onchange="updateOutput()">
             <option value="de">Deutsch</option>
             <option value="en">English</option>
-          </select>
-        </div>
-
-        <div class="form-row">
-          <label>Format</label>
-          <select id="format">
-            <option value="text">Text-Post</option>
-            <option value="carousel">Karussell-Intro</option>
-            <option value="reel">Reel-Caption</option>
-            <option value="story">Story-Teaser</option>
-          </select>
-        </div>
-
-        <div class="form-row">
-          <label>Thema / Kontext <span style="font-weight:400;color:#aaa">(optional)</span></label>
-          <textarea id="topic" placeholder="z.B. «Neues Lab im Klybeck eröffnet», «Event am 15. Juli», «Member Spotlight: BioStartup XY»"></textarea>
-        </div>
-
-        <button class="btn-generate" id="gen-btn" onclick="generatePost()">
-          <span id="gen-icon">✦</span>
-          <span id="gen-label">Post generieren</span>
-        </button>
+          </select></div>
+        <div class="form-row"><label>Vorlage</label>
+          <select id="template" onchange="updateOutput()"></select></div>
+        <div class="form-row"><label>Thema / Anpassung <span style="font-weight:400;color:#aaa">(optional)</span></label>
+          <textarea id="custom" placeholder="z.B. Name des Members, Eventdatum, Standort…" oninput="applyCustom()"></textarea></div>
+        <button class="btn-generate" onclick="addToCalendar()">+ In Redaktionsplan</button>
       </div>
-
-      <!-- Right: Output -->
       <div class="card">
-        <div class="card-label">Generierter Post</div>
-
-        <div class="output-box" id="output">
-          <span class="output-placeholder">Post erscheint hier nach der Generierung…</span>
-        </div>
-
-        <div class="char-bar">
-          <span class="char-count" id="char-count"></span>
-        </div>
-
-        <div class="hashtag-section" id="hashtag-section" style="display:none">
-          <div class="hashtag-label">Hashtag-Vorschläge</div>
-          <div class="hashtag-box" id="hashtags"></div>
-        </div>
-
-        <div class="action-row" id="action-row" style="display:none">
+        <div class="card-label">Post-Vorschau</div>
+        <div class="template-note" id="template-note"></div>
+        <div class="output-box" id="output" contenteditable="true" oninput="updateCharCount()"></div>
+        <div class="char-count" id="char-count"></div>
+        <div class="hashtag-label">Hashtags</div>
+        <div class="hashtag-box" id="hashtags"></div>
+        <div class="action-row">
           <button class="btn-sm primary" onclick="copyPost()">⎘ Kopieren</button>
-          <button class="btn-sm" onclick="addToCalendar()">+ In Kalender</button>
-          <button class="btn-sm" onclick="generatePost()">↺ Neu generieren</button>
+          <button class="btn-sm" onclick="resetCustom()">↺ Zurücksetzen</button>
         </div>
       </div>
-
     </div>
   </div>
 </div>
@@ -494,387 +177,355 @@
 <!-- ── CALENDAR ── -->
 <div id="tab-calendar" class="view">
   <div class="page">
-    <div class="cal-topbar">
-      <div class="cal-title" id="cal-label"></div>
-      <div style="display:flex;gap:8px">
-        <button class="btn-sm" onclick="changeWeek(-1)">← Zurück</button>
-        <button class="btn-sm" onclick="changeWeek(0)">Heute</button>
-        <button class="btn-sm" onclick="changeWeek(1)">Vor →</button>
+    <div style="background:#e8f4f5;border-radius:10px;padding:10px 16px;margin-bottom:14px;font-size:12px;color:#2a6a6e;display:flex;gap:24px;flex-wrap:wrap;border-left:3px solid var(--teal)">
+  <span><strong>LinkedIn</strong> · Di–Do · 08:30 & 12:00</span>
+  <span><strong>Instagram</strong> · Di, Mi, Fr · 11:00 & 18:00</span>
+  <span style="color:#aaa;font-size:11px">Richtwerte bis eigene Analytics verfügbar</span>
+</div>
+<div class="channel-bar">
+      <div class="channel-tabs">
+        <button class="ch-tab active" onclick="setChannel('all',this)">Alle Kanäle</button>
+        <button class="ch-tab li" onclick="setChannel('LinkedIn',this)">LinkedIn</button>
+        <button class="ch-tab ig" onclick="setChannel('Instagram',this)">Instagram</button>
+        
+      </div>
+      <div class="month-nav">
+        <button class="btn-nav" onclick="changeMonth(-1)">←</button>
+        <div class="month-label" id="month-label"></div>
+        <button class="btn-nav" onclick="changeMonth(1)">→</button>
+        <button class="btn-nav" onclick="goToday()">Heute</button>
       </div>
     </div>
-    <div class="week-grid" id="cal-grid"></div>
+    <div class="month-grid" id="dow-labels"></div>
+    <div class="month-grid" id="cal-grid" style="margin-top:4px;"></div>
   </div>
 </div>
 
-<!-- ── API KEY MODAL ── -->
-<div class="overlay" id="key-modal" style="display:none" onclick="closeKeyModal(event)">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div class="modal-head">
-      <h3>Anthropic API-Key</h3>
-      <button class="btn-close" onclick="closeKeyModal()">×</button>
-    </div>
-    <div class="api-info">
-      Der API-Key wird <strong>ausschliesslich lokal</strong> in deinem Browser gespeichert (localStorage) und verlässt dieses Gerät nicht.<br><br>
-      Key erstellen: <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API Keys → Create Key
-    </div>
-    <div class="form-row">
-      <label>API-Key (sk-ant-...)</label>
-      <input type="text" id="key-input" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false">
-    </div>
-    <div style="display:flex;gap:8px;margin-top:8px">
-      <button class="btn-sm primary" onclick="saveKey()" style="flex:1;justify-content:center">Speichern</button>
-      <button class="btn-sm" onclick="clearKey()" style="color:#c0392b;border-color:#c0392b">Löschen</button>
-    </div>
+<!-- SLOT MODAL -->
+<div class="overlay" id="slot-modal" style="display:none" onclick="if(event.target===this)closeSlotModal()">
+  <div class="modal">
+    <div class="modal-head"><h3 id="slot-title">Post</h3><button class="btn-close" onclick="closeSlotModal()">×</button></div>
+    <div id="slot-body"></div>
   </div>
 </div>
 
-<!-- ── SLOT MODAL ── -->
-<div class="overlay" id="slot-modal" style="display:none" onclick="closeSlotModal(event)">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div class="modal-head">
-      <h3 id="slot-modal-title">Post</h3>
-      <button class="btn-close" onclick="closeSlotModal()">×</button>
-    </div>
-    <div id="slot-modal-body"></div>
-  </div>
-</div>
-
-<!-- ── ADD POST MODAL ── -->
-<div class="overlay" id="add-modal" style="display:none" onclick="closeAddModal(event)">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div class="modal-head">
-      <h3>Post hinzufügen</h3>
-      <button class="btn-close" onclick="closeAddModal()">×</button>
-    </div>
-    <div id="add-modal-body"></div>
+<!-- ADD MODAL -->
+<div class="overlay" id="add-modal" style="display:none" onclick="if(event.target===this)closeAddModal()">
+  <div class="modal">
+    <div class="modal-head"><h3 id="add-modal-title">Post hinzufügen</h3><button class="btn-close" onclick="closeAddModal()">×</button></div>
+    <div id="add-body"></div>
   </div>
 </div>
 
 <div id="toast"></div>
 
 <script>
-/* ─── STATE ─── */
-const DAYS = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag'];
-let weekOffset = 0;
-let calPosts = JSON.parse(localStorage.getItem('5f_posts') || '{}');
-let lastPost = '';
-let lastHashtags = '';
-let currentAddKey = '';
-
-const PILLAR_LABELS = {
-  community: 'Community & People',
-  thought: 'Thought Leadership',
-  space: 'Space & Infrastructure',
-  events: 'Events & Networking',
-  upsell: 'Offers & Upsell'
+/* ── TEMPLATES ── */
+const TEMPLATES = {
+  linkedin:{
+    de:{
+      community:[
+        {label:"Member Spotlight",text:"Heute stellen wir vor: [Name] von [Unternehmen].\n\n[Kurze Beschreibung was sie aufbauen und was sie im 5th Floor erreicht haben.]\n\nGenau das meinen wir mit «By Entrepreneurs, For Entrepreneurs».\n\nWelche Gründer kennst du, die den nächsten Schritt machen wollen?",hashtags:"#Entrepreneurship #LifeSciences #Basel #Coworking #Founder #The5thFloor"},
+        {label:"Behind the Scenes",text:"Was passiert hinter den Kulissen im The 5th Floor?\n\n[Beschreibung eines typischen Tages oder besonderen Moments.]\n\nUnsere Community macht den Unterschied – nicht die Quadratmeter.\n\nthe5thfloor.ch",hashtags:"#Community #Workspace #Innovation #Basel #Entrepreneurship #The5thFloor"}
+      ],
+      thought:[
+        {label:"Industry Insight",text:"Life Sciences in der Schweiz 2026: [These oder Trend in einem Satz.]\n\n[2–3 Sätze Einschätzung aus dem Alltag im 5th Floor.]\n\nWas ist eure Einschätzung dazu?",hashtags:"#LifeSciences #MedTech #Innovation #Basel #Switzerland #Entrepreneurship"},
+        {label:"Future of Work",text:"Die Frage ist nicht mehr ob man remote arbeitet – sondern wo.\n\n[Beobachtung über Arbeitskultur oder Community.]\n\nFür uns ist die Antwort klar: Umgebung ist Infrastruktur.\n\nWie seht ihr das?",hashtags:"#FutureOfWork #Coworking #Basel #Entrepreneurship #The5thFloor"}
+      ],
+      space:[
+        {label:"Space Vorstellung",text:"Unser Standort [Klybeck / Muttenz / Orlando]: [Ein Satz was ihn besonders macht.]\n\n[Beschreibung Räumlichkeiten und Ausstattung.]\n\nFür Founder, die mehr brauchen als einen Schreibtisch.\n\nBesichtigung: hello@the5thfloor.ch",hashtags:"#Coworking #Basel #LifeSciences #Workspace #The5thFloor #ProWorking"},
+        {label:"Meeting Room",text:"Euer nächstes Board-Meeting. Euer nächstes Investorengespräch.\n\nSie alle brauchen den richtigen Raum.\n\nUnsere Meeting Rooms im [Standort] sind buchbar – für Mitglieder und extern.\n\n→ the5thfloor.ch",hashtags:"#MeetingRoom #Basel #Coworking #Startup #The5thFloor"}
+      ],
+      events:[
+        {label:"Event Ankündigung",text:"Save the date: [Eventname] am [Datum].\n\n[Was passiert, wen spricht es an.]\n\nLimitierte Plätze – Anmeldung: [Link]\n\nBy Entrepreneurs, For Entrepreneurs.",hashtags:"#Event #Networking #Basel #LifeSciences #Entrepreneurship #The5thFloor"},
+        {label:"Event Recap",text:"Rückblick auf [Eventname] vom [Datum].\n\n[Was war das Highlight? Was haben Teilnehmer mitgenommen?]\n\nNächstes Event: [Datum]. Interesse: hello@the5thfloor.ch\n\nDanke an alle dabei.",hashtags:"#EventRecap #Networking #Basel #Community #The5thFloor"}
+      ],
+      upsell:[
+        {label:"Membership",text:"The 5th Floor Membership – was steckt dahinter?\n\n✓ Flexible Arbeitsplätze in Basel und Orlando\n✓ Meeting Rooms on demand\n✓ Netzwerk aus Gründern und Investoren\n✓ Events und Workshops inklusive\n\n→ the5thfloor.ch",hashtags:"#Membership #Coworking #Basel #Startup #The5thFloor #ProWorking"},
+        {label:"Day Pass",text:"Noch kein Mitglied? Kein Problem.\n\nMit unserem Day Pass arbeitest du einen Tag im The 5th Floor – keine Verpflichtung.\n\nIdeal um Umgebung, Community und Energie zu testen.\n\n→ hello@the5thfloor.ch",hashtags:"#DayPass #Coworking #Basel #Workspace #The5thFloor"}
+      ]
+    },
+    en:{
+      community:[
+        {label:"Member Spotlight",text:"Meet [Name] from [Company].\n\n[Brief description of what they build and how they use The 5th Floor.]\n\nThis is exactly what «By Entrepreneurs, For Entrepreneurs» means.\n\nWho do you know that's ready for the next step?",hashtags:"#Entrepreneurship #LifeSciences #Basel #Coworking #Founder #The5thFloor"},
+        {label:"Community Moment",text:"What happens inside The 5th Floor?\n\n[Description of a typical day or special moment.]\n\nOur people make the difference – not the square meters.\n\nthe5thfloor.ch",hashtags:"#Community #Workspace #Innovation #Basel #Entrepreneurship #The5thFloor"}
+      ],
+      thought:[
+        {label:"Industry Insight",text:"Life Sciences in Switzerland 2026: [One bold thesis.]\n\n[2–3 sentences of context from the floor.]\n\nWhat's your take?",hashtags:"#LifeSciences #MedTech #Innovation #Basel #Switzerland #Entrepreneurship"},
+        {label:"Future of Work",text:"The question is no longer whether you work remotely – it's where.\n\n[Observation about work culture or community.]\n\nAt The 5th Floor, the answer is clear: environment is infrastructure.\n\nHow do you see it?",hashtags:"#FutureOfWork #Coworking #Basel #Entrepreneurship #The5thFloor"}
+      ],
+      space:[
+        {label:"Space Introduction",text:"Our [Klybeck / Muttenz / Orlando] location: [One sentence on what makes it special.]\n\n[Description of the space and facilities.]\n\nBuilt for founders who need more than a desk.\n\nBook a tour: hello@the5thfloor.ch",hashtags:"#Coworking #Basel #LifeSciences #Workspace #The5thFloor #ProWorking"},
+        {label:"Meeting Room",text:"Your next board meeting. Your next investor pitch.\n\nThey all start with the right room.\n\nOur meeting rooms at [location] are available for members and external bookings.\n\n→ the5thfloor.ch",hashtags:"#MeetingRoom #Basel #Coworking #Startup #The5thFloor"}
+      ],
+      events:[
+        {label:"Event Announcement",text:"Save the date: [Event Name] on [Date].\n\n[What happens and who it's for.]\n\nLimited spots – register: [Link]\n\nBy Entrepreneurs, For Entrepreneurs.",hashtags:"#Event #Networking #Basel #LifeSciences #Entrepreneurship #The5thFloor"},
+        {label:"Event Recap",text:"Looking back at [Event Name] on [Date].\n\n[What was the highlight? What did attendees take away?]\n\nNext event: [Date]. Interested? hello@the5thfloor.ch",hashtags:"#EventRecap #Networking #Basel #Community #The5thFloor"}
+      ],
+      upsell:[
+        {label:"Membership",text:"The 5th Floor Membership – what's included?\n\n✓ Flexible workspaces in Basel and Orlando\n✓ Meeting rooms on demand\n✓ Network of founders and investors\n✓ Events and workshops included\n\n→ the5thfloor.ch",hashtags:"#Membership #Coworking #Basel #Startup #The5thFloor #ProWorking"},
+        {label:"Day Pass",text:"Not a member yet? No commitment needed.\n\nWith our Day Pass, you work one day at The 5th Floor – no contract.\n\nPerfect for testing the environment, community and energy.\n\n→ hello@the5thfloor.ch",hashtags:"#DayPass #Coworking #Basel #Workspace #The5thFloor"}
+      ]
+    }
+  },
+  instagram:{
+    de:{
+      community:[
+        {label:"Member Spotlight",text:"Von unserem Floor zu eurem Feed: [Name] von [Unternehmen] baut hier [was].\n\nGrösste Lektion bisher? «[Zitat oder inspirierende Aussage].»\n\nBy Entrepreneurs, For Entrepreneurs. 🤝",hashtags:"#Entrepreneurship #Basel #Coworking #Founder #Startup #LifeSciences #The5thFloor #Switzerland #Innovation #Community"},
+        {label:"Behind the Scenes",text:"Ein Blick hinter die Kulissen.\n\n[Was ist auf dem Bild / Reel zu sehen?]\n\nDas ist der Alltag im The 5th Floor.",hashtags:"#BehindTheScenes #Coworking #Basel #Community #Workspace #The5thFloor #Switzerland #Startup"}
+      ],
+      thought:[
+        {label:"Zitat Post",text:"«[Inspirierendes Zitat über Unternehmertum oder Innovation.]\"\n\nBy Entrepreneurs, For Entrepreneurs.\nThe 5th Floor · Basel & Orlando",hashtags:"#Entrepreneurship #Mindset #Founder #Basel #Innovation #The5thFloor #Switzerland #LifeSciences"},
+        {label:"Fact / Stat",text:"[Interessante Zahl oder Fakt über die Schweizer Startup-Szene.]\n\nWir sind mittendrin. 📍 Basel\n\nThe 5th Floor · By Entrepreneurs, For Entrepreneurs.",hashtags:"#LifeSciences #Startup #Switzerland #Basel #Innovation #MedTech #The5thFloor"}
+      ],
+      space:[
+        {label:"Space Visual",text:"Das ist unser [Standort].\n\n[Ein Satz Atmosphäre.]\n\nFür Founder, die mehr brauchen als einen Schreibtisch.\nBesichtigung: hello@the5thfloor.ch",hashtags:"#Coworking #Basel #Workspace #Design #Office #The5thFloor #Switzerland #Startup #LifeSciences"},
+        {label:"Detail Shot",text:"Details machen den Unterschied.\n\n[Kurze Beschreibung des Bildausschnitts.]\n\nThe 5th Floor · the5thfloor.ch",hashtags:"#InteriorDesign #Workspace #Coworking #Basel #The5thFloor #Office #Switzerland"}
+      ],
+      events:[
+        {label:"Event Ankündigung",text:"📅 [Eventname] · [Datum] · [Uhrzeit]\n\n[Ein Satz was euch erwartet.]\n\nLimitierte Plätze. Anmeldung im Bio-Link oder: hello@the5thfloor.ch",hashtags:"#Event #Networking #Basel #Entrepreneurship #The5thFloor #Switzerland #Startup #LifeSciences"},
+        {label:"Event Recap",text:"Was für ein Abend. ✨\n\n[Kurzer Recap – was passiert ist, wer da war.]\n\nBis zum nächsten Mal. The 5th Floor.",hashtags:"#EventRecap #Networking #Community #Basel #The5thFloor #Entrepreneurship"}
+      ],
+      upsell:[
+        {label:"Membership Teaser",text:"Ein Arbeitsplatz ist ein Ort.\nEine Membership bei The 5th Floor ist eine Entscheidung.\n\n→ Flexible Desks · Meeting Rooms · Community · Basel & Orlando\n\nMehr im Bio.",hashtags:"#Membership #Coworking #Basel #Startup #The5thFloor #ProWorking #Switzerland #Founder"},
+        {label:"Day Pass",text:"Noch nie bei uns gewesen?\n\nDay Pass – einmal vorbeikommen, keine Verpflichtung.\n\nWir denken, du bleibst. 😉\nBuchung: hello@the5thfloor.ch",hashtags:"#DayPass #Coworking #Basel #Workspace #The5thFloor #Switzerland #Startup"}
+      ]
+    },
+    en:{
+      community:[
+        {label:"Member Spotlight",text:"From our floor to your feed: [Name] from [Company] builds [what] right here.\n\nBiggest lesson? «[Quote or inspiring line].\"\n\nBy Entrepreneurs, For Entrepreneurs. 🤝",hashtags:"#Entrepreneurship #Basel #Coworking #Founder #Startup #LifeSciences #The5thFloor #Switzerland #Innovation"},
+        {label:"Behind the Scenes",text:"A look behind the scenes.\n\n[Short description of what's shown.]\n\nThis is everyday life at The 5th Floor.",hashtags:"#BehindTheScenes #Coworking #Basel #Community #Workspace #The5thFloor #Switzerland"}
+      ],
+      thought:[
+        {label:"Quote Post",text:"«[Inspiring quote about entrepreneurship or innovation.]\"\n\nBy Entrepreneurs, For Entrepreneurs.\nThe 5th Floor · Basel & Orlando",hashtags:"#Entrepreneurship #Mindset #Founder #Basel #Innovation #The5thFloor #Switzerland"},
+        {label:"Fact / Stat",text:"[Interesting number or fact about the Swiss startup ecosystem.]\n\nWe're right in the middle of it. 📍 Basel\n\nThe 5th Floor · By Entrepreneurs, For Entrepreneurs.",hashtags:"#LifeSciences #Startup #Switzerland #Basel #Innovation #MedTech #The5thFloor"}
+      ],
+      space:[
+        {label:"Space Visual",text:"This is our [location].\n\n[One sentence about the atmosphere.]\n\nFor founders who need more than a desk.\nTour: hello@the5thfloor.ch",hashtags:"#Coworking #Basel #Workspace #Design #Office #The5thFloor #Switzerland #Startup"},
+        {label:"Detail Shot",text:"Details make the difference.\n\n[Short description of the shot.]\n\nThe 5th Floor · the5thfloor.ch",hashtags:"#InteriorDesign #Workspace #Coworking #Basel #The5thFloor #Office #Switzerland"}
+      ],
+      events:[
+        {label:"Event Announcement",text:"📅 [Event Name] · [Date] · [Time]\n\n[One sentence on what to expect.]\n\nLimited spots. Register via link in bio or: hello@the5thfloor.ch",hashtags:"#Event #Networking #Basel #Entrepreneurship #The5thFloor #Switzerland #Startup"},
+        {label:"Event Recap",text:"What a night. ✨\n\n[Short recap – what happened, who was there.]\n\nSee you at the next one. The 5th Floor.",hashtags:"#EventRecap #Networking #Community #Basel #The5thFloor #Entrepreneurship"}
+      ],
+      upsell:[
+        {label:"Membership Teaser",text:"A workspace is a place.\nA 5th Floor Membership is a decision.\n\n→ Flexible Desks · Meeting Rooms · Community · Basel & Orlando\n\nMore in bio.",hashtags:"#Membership #Coworking #Basel #Startup #The5thFloor #ProWorking #Switzerland #Founder"},
+        {label:"Day Pass",text:"Never visited us before?\n\nDay Pass – come by once, no commitment.\n\nWe think you'll stay. 😉\nBook: hello@the5thfloor.ch",hashtags:"#DayPass #Coworking #Basel #Workspace #The5thFloor #Switzerland #Startup"}
+      ]
+    }
+  }
 };
 
-const DEFAULT_WEEK = [
-  { day:0, platform:'LinkedIn',  format:'Thought Leadership', text:'Life Sciences Basel: was die Region 2026 bewegt.',      status:'ready' },
-  { day:1, platform:'Instagram', format:'Space Visual',        text:'Frischer Blick auf unser Lab im Klybeck.',             status:'draft' },
-  { day:2, platform:'LinkedIn',  format:'Member Spotlight',    text:'Founder-Portrait: [Name] über seinen Weg.',           status:'draft' },
-  { day:2, platform:'Instagram', format:'Reel',                text:'30s Behind the Scenes – Community.',                  status:'draft' },
-  { day:3, platform:'LinkedIn',  format:'Event',               text:'Save the date: Networking Night 15. Juli.',           status:'ready' },
-  { day:4, platform:'Instagram', format:'Community',           text:'Wochenabschluss im 5th Floor.',                       status:'published' },
-];
+const CHAR_LIMITS={linkedin:1300,instagram:2200};
+const NOTES={linkedin:"LinkedIn · B2B-Ton, direkt und substanziell. Felder in [Klammern] ersetzen.",instagram:"Instagram · Visuell, lebendiger Ton. Felder in [Klammern] ersetzen. Bild oder Reel nicht vergessen."};
+const MONTH_NAMES=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+const DOW=['Mo','Di','Mi','Do','Fr','Sa','So'];
 
-/* ─── API KEY ─── */
-function getKey() { return localStorage.getItem('5f_apikey') || ''; }
-function updateKeyStatus() {
-  const k = getKey();
-  const el = document.getElementById('api-status');
-  if (k) { el.textContent = 'API-Key aktiv'; el.className = 'api-status ok'; }
-  else    { el.textContent = 'Kein API-Key';  el.className = 'api-status missing'; }
-}
-function openKeyModal() {
-  document.getElementById('key-input').value = getKey();
-  document.getElementById('key-modal').style.display = 'flex';
-}
-function closeKeyModal(e) {
-  if (!e || e.target === document.getElementById('key-modal'))
-    document.getElementById('key-modal').style.display = 'none';
-}
-function saveKey() {
-  const v = document.getElementById('key-input').value.trim();
-  if (!v) { showToast('Bitte Key eingeben'); return; }
-  localStorage.setItem('5f_apikey', v);
-  updateKeyStatus();
-  document.getElementById('key-modal').style.display = 'none';
-  showToast('API-Key gespeichert');
-}
-function clearKey() {
-  localStorage.removeItem('5f_apikey');
-  document.getElementById('key-input').value = '';
-  updateKeyStatus();
-  showToast('API-Key gelöscht');
+/* ── STATE ── */
+let calPosts=JSON.parse(localStorage.getItem('5f_posts')||'{}');
+let activeChannel='all';
+let calYear=new Date().getFullYear();
+let calMonth=new Date().getMonth();
+let baseText='';
+let currentAddKey='';
+
+/* ── GENERATOR ── */
+function getSelections(){return{platform:document.getElementById('platform').value,pillar:document.getElementById('pillar').value,language:document.getElementById('language').value,tmplIdx:parseInt(document.getElementById('template').value)};}
+function populateTemplates(){const{platform,pillar,language}=getSelections();const sel=document.getElementById('template');sel.innerHTML='';(TEMPLATES[platform]?.[language]?.[pillar]||[]).forEach((t,i)=>{const o=document.createElement('option');o.value=i;o.textContent=t.label;sel.appendChild(o);});}
+function updateOutput(){populateTemplates();const{platform,pillar,language,tmplIdx}=getSelections();const ts=TEMPLATES[platform]?.[language]?.[pillar]||[];const t=ts[tmplIdx]||ts[0];if(!t)return;baseText=t.text;document.getElementById('output').textContent=t.text;document.getElementById('hashtags').textContent=t.hashtags;document.getElementById('template-note').textContent=NOTES[platform]||'';document.getElementById('custom').value='';updateCharCount();}
+function applyCustom(){const c=document.getElementById('custom').value.trim();document.getElementById('output').textContent=c?baseText+'\n\n'+c:baseText;updateCharCount();}
+function resetCustom(){document.getElementById('custom').value='';document.getElementById('output').textContent=baseText;updateCharCount();}
+function updateCharCount(){const t=document.getElementById('output').textContent;const l=CHAR_LIMITS[document.getElementById('platform').value];const el=document.getElementById('char-count');el.textContent=`${t.length} / ${l} Zeichen`;el.style.color=t.length>l?'#e67e22':'#999';}
+function copyPost(){const t=document.getElementById('output').textContent;const h=document.getElementById('hashtags').textContent;navigator.clipboard.writeText(t+(h&&!h.startsWith('—')?'\n\n'+h:'')).then(()=>showToast('Post kopiert ✓'));}
+function addToCalendar(){
+  const text=document.getElementById('output').textContent;
+  const{platform,pillar,language,tmplIdx}=getSelections();
+  const plat={linkedin:'LinkedIn',instagram:'Instagram'}[platform];
+  const ts=TEMPLATES[platform]?.[language]?.[pillar]||[];
+  const t=ts[tmplIdx]||ts[0];
+  const today=new Date().toISOString().split('T')[0];
+  if(!calPosts[today])calPosts[today]=[];
+  const defT={'LinkedIn':'08:30','Instagram':'11:00'};
+  const postTime=defT[plat]||'09:00';
+  calPosts[today].push({platform:plat,format:t?t.label:'Post',text:text.slice(0,80)+(text.length>80?'…':''),full:text,status:'draft',time:postTime});
+  savePosts();showToast('In Redaktionsplan gespeichert');
 }
 
-/* ─── TABS ─── */
-function switchTab(name, btn) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
+/* ── CALENDAR ── */
+function setChannel(ch,btn){
+  activeChannel=ch;
+  document.querySelectorAll('.ch-tab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  if (name === 'calendar') renderCalendar();
+  renderMonth();
 }
+function changeMonth(dir){calMonth+=dir;if(calMonth>11){calMonth=0;calYear++;}if(calMonth<0){calMonth=11;calYear--;}renderMonth();}
+function goToday(){const n=new Date();calYear=n.getFullYear();calMonth=n.getMonth();renderMonth();}
 
-/* ─── GENERATOR ─── */
-async function generatePost() {
-  const key = getKey();
-  if (!key) { openKeyModal(); return; }
-
-  const platform = document.getElementById('platform').value;
-  const pillar   = document.getElementById('pillar').value;
-  const language = document.getElementById('language').value;
-  const format   = document.getElementById('format').value;
-  const topic    = document.getElementById('topic').value.trim();
-
-  const btn       = document.getElementById('gen-btn');
-  const labelEl   = document.getElementById('gen-label');
-  const iconEl    = document.getElementById('gen-icon');
-  const outputEl  = document.getElementById('output');
-
-  btn.disabled = true;
-  iconEl.outerHTML = '<span class="spinner" id="gen-icon"></span>';
-  labelEl.textContent = 'Generiere…';
-  outputEl.innerHTML = '<span class="output-placeholder">KI schreibt…</span>';
-  document.getElementById('hashtag-section').style.display = 'none';
-  document.getElementById('action-row').style.display = 'none';
-  document.getElementById('char-count').textContent = '';
-
-  const charLimits = { linkedin: 1300, instagram: 2200, newsletter: 600 };
-  const charLimit  = charLimits[platform];
-
-  const formatLabels = {
-    text: 'Text-Post',
-    carousel: 'Karussell-Intro (erster Slide)',
-    reel: 'Reel-Caption',
-    story: 'Story-Teaser'
-  };
-
-  const systemPrompt = `Du bist der Social Media Manager von The 5th Floor – einem professionellen Coworking- und Pro-Working-Space in Basel (Klybeck & Muttenz) und Orlando, USA.
-
-Marke: professionell, B2B, ambitioniert, unternehmerisch. Slogan: "By Entrepreneurs, For Entrepreneurs."
-Ton: direkt, substanziell, keine Floskeln, keine übertriebenen Emojis (maximal 1 pro Post, nur wenn wirklich sinnvoll).
-Sprache: ${language === 'de' ? 'Deutsch' : 'English'}. Kein Sprachmix innerhalb eines Posts.
-Zielgruppe: Founders, Scale-ups, Life Sciences, MedTech, Corporate Innovatoren in der Schweiz/DACH und USA.
-
-Format: Schreibe zuerst den fertigen Post-Text. Dann, nach einer Zeile mit genau "---", liste 3–7 passende Hashtags.
-Kein Preamble. Keine Erklärungen. Nur Post + "---" + Hashtags.`;
-
-  const userPrompt = `Kanal: ${{linkedin:'LinkedIn',instagram:'Instagram',newsletter:'Newsletter'}[platform]}
-Content-Säule: ${PILLAR_LABELS[pillar]}
-Format: ${formatLabels[format]}
-Maximale Zeichenanzahl: ${charLimit}
-${topic ? 'Thema/Kontext: ' + topic : 'Kein spezifisches Thema – wähle ein passendes Thema für diese Säule.'}
-
-Schreibe einen fertigen, direkt verwendbaren Post.`;
-
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': key,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: userPrompt }]
-      })
+function renderMonth(){
+  document.getElementById('month-label').textContent=`${MONTH_NAMES[calMonth]} ${calYear}`;
+  // DOW labels
+  const dlEl=document.getElementById('dow-labels');
+  dlEl.innerHTML='';
+  DOW.forEach(d=>{const el=document.createElement('div');el.className='dow-label';el.textContent=d;dlEl.appendChild(el);});
+  // Grid
+  const grid=document.getElementById('cal-grid');
+  grid.innerHTML='';
+  const firstDay=new Date(calYear,calMonth,1).getDay();
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  const startOffset=firstDay===0?6:firstDay-1;
+  const today=new Date();
+  // prev month padding
+  for(let i=0;i<startOffset;i++){const c=document.createElement('div');c.className='day-cell other-month';grid.appendChild(c);}
+  // actual days
+  for(let d=1;d<=daysInMonth;d++){
+    const date=new Date(calYear,calMonth,d);
+    const key=date.toISOString().split('T')[0];
+    const isToday=date.getFullYear()===today.getFullYear()&&date.getMonth()===today.getMonth()&&date.getDate()===today.getDate();
+    const cell=document.createElement('div');
+    cell.className='day-cell'+(isToday?' today':'');
+    cell.dataset.key=key;
+    cell.ondragover=(e)=>{e.preventDefault();cell.classList.add('drag-over');};
+    cell.ondragleave=()=>cell.classList.remove('drag-over');
+    cell.ondrop=(e)=>{
+      e.preventDefault();
+      cell.classList.remove('drag-over');
+      const srcKey=e.dataTransfer.getData('srcKey');
+      const srcIdx=parseInt(e.dataTransfer.getData('srcIdx'));
+      const destKey=key;
+      if(srcKey===destKey)return;
+      if(!calPosts[srcKey])return;
+      const post=calPosts[srcKey].splice(srcIdx,1)[0];
+      if(!calPosts[destKey])calPosts[destKey]=[];
+      calPosts[destKey].push(post);
+      savePosts();renderMonth();showToast('Post verschoben');
+    };
+    const dayNum=document.createElement('div');
+    dayNum.className='day-num';dayNum.textContent=d;cell.appendChild(dayNum);
+    // posts
+    const posts=calPosts[key]||[];
+    const filtered=activeChannel==='all'?posts:posts.filter(p=>p.platform===activeChannel);
+    const max=3;
+    filtered.slice(0,max).forEach(p=>{
+      const chip=document.createElement('div');
+      const cls=p.platform==='LinkedIn'?'chip-li':p.platform==='Instagram'?'chip-ig':'chip-all';
+      chip.className=`post-chip ${cls}`;
+      chip.textContent=(p.time?p.time+' · ':'')+( p.format||p.platform);
+      chip.title=p.text;
+      chip.draggable=true;
+      chip.dataset.srcKey=key;
+      chip.dataset.srcIdx=posts.indexOf(p);
+      chip.onclick=(e)=>{e.stopPropagation();openSlotModal(p,key,posts.indexOf(p));};
+      chip.ondragstart=(e)=>{
+        e.dataTransfer.setData('srcKey',key);
+        e.dataTransfer.setData('srcIdx',String(posts.indexOf(p)));
+        chip.classList.add('dragging');
+      };
+      chip.ondragend=()=>chip.classList.remove('dragging');
+      cell.appendChild(chip);
     });
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error?.message || 'API-Fehler ' + res.status);
-    }
-
-    const data = await res.json();
-    const full = data.content?.find(b => b.type === 'text')?.text || '';
-    const parts = full.split(/^---$/m);
-    lastPost      = parts[0].trim();
-    lastHashtags  = parts[1] ? parts[1].trim() : '';
-
-    outputEl.textContent = lastPost;
-
-    const len = lastPost.length;
-    const countEl = document.getElementById('char-count');
-    countEl.textContent = `${len} / ${charLimit} Zeichen`;
-    countEl.className = len > charLimit ? 'char-count char-warn' : 'char-count';
-
-    if (lastHashtags) {
-      document.getElementById('hashtags').textContent = lastHashtags;
-      document.getElementById('hashtag-section').style.display = 'block';
-    }
-    document.getElementById('action-row').style.display = 'flex';
-
-  } catch (err) {
-    outputEl.innerHTML = `<span class="output-placeholder">Fehler: ${err.message}</span>`;
-    showToast('Fehler beim Generieren');
+    if(filtered.length>max){const m=document.createElement('div');m.className='more-chip';m.textContent=`+${filtered.length-max} weitere`;cell.appendChild(m);}
+    // add button
+    const addBtn=document.createElement('button');
+    addBtn.className='add-day-btn';addBtn.textContent='+';addBtn.title='Post hinzufügen';
+    addBtn.onclick=(e)=>{e.stopPropagation();openAddPostModal(key,d);};
+    cell.appendChild(addBtn);
+    grid.appendChild(cell);
   }
-
-  btn.disabled = false;
-  document.getElementById('gen-icon').outerHTML = '<span id="gen-icon">✦</span>';
-  labelEl.textContent = 'Post generieren';
+  // trailing empty cells
+  const total=startOffset+daysInMonth;
+  const remainder=total%7;
+  if(remainder!==0){for(let i=0;i<7-remainder;i++){const c=document.createElement('div');c.className='day-cell other-month';grid.appendChild(c);}}
 }
 
-function copyPost() {
-  if (!lastPost) return;
-  const full = lastPost + (lastHashtags ? '\n\n' + lastHashtags : '');
-  navigator.clipboard.writeText(full).then(() => showToast('Post kopiert ✓'));
-}
-
-function addToCalendar() {
-  if (!lastPost) return;
-  const plat = { linkedin:'LinkedIn', instagram:'Instagram', newsletter:'Newsletter' }[document.getElementById('platform').value];
-  const fmt  = { text:'Text-Post', carousel:'Karussell', reel:'Reel', story:'Story' }[document.getElementById('format').value];
-  const today = new Date().toISOString().split('T')[0];
-  if (!calPosts[today]) calPosts[today] = [];
-  calPosts[today].push({ platform: plat, format: fmt, text: lastPost.slice(0, 90) + (lastPost.length > 90 ? '…' : ''), status: 'draft', full: lastPost });
-  savePosts();
-  showToast('In Redaktionsplan gespeichert');
-}
-
-/* ─── CALENDAR ─── */
-function getWeekDates(offset) {
-  const now  = new Date();
-  const dow  = now.getDay();
-  const mon  = new Date(now);
-  mon.setDate(now.getDate() - (dow === 0 ? 6 : dow - 1) + offset * 7);
-  return Array.from({ length: 5 }, (_, i) => {
-    const d = new Date(mon);
-    d.setDate(mon.getDate() + i);
-    return d;
-  });
-}
-
-function renderCalendar() {
-  const dates = getWeekDates(weekOffset);
-  const fmt   = d => `${d.getDate()}.${d.getMonth() + 1}.`;
-  document.getElementById('cal-label').textContent =
-    `${fmt(dates[0])} – ${fmt(dates[4])} ${dates[0].getFullYear()}`;
-
-  const grid = document.getElementById('cal-grid');
-  grid.innerHTML = '';
-
-  dates.forEach((date, i) => {
-    const col = document.createElement('div');
-    col.innerHTML = `<div class="day-head">${DAYS[i]}<br><span style="font-weight:400;letter-spacing:0;font-size:11px">${fmt(date)}</span></div>`;
-
-    const key   = date.toISOString().split('T')[0];
-    const saved = calPosts[key] || [];
-    const defs  = weekOffset === 0 ? DEFAULT_WEEK.filter(p => p.day === i) : [];
-    [...defs, ...saved].forEach((p, pi) => {
-      const slot = document.createElement('div');
-      const sc   = p.status === 'published' ? 's-published' : p.status === 'ready' ? 's-ready' : 's-draft';
-      const sl   = p.status === 'published' ? 'Publiziert' : p.status === 'ready' ? 'Bereit' : 'Entwurf';
-      slot.className = `cal-slot ${p.platform === 'LinkedIn' ? 'linkedin' : ''}`;
-      slot.innerHTML = `<div class="sp">${p.platform}</div><div class="sf">${p.format}</div><div class="st">${p.text}</div><span class="status-pill ${sc}">${sl}</span>`;
-      slot.onclick = () => openSlotModal(p, key, pi, defs.length);
-      col.appendChild(slot);
-    });
-
-    const add = document.createElement('button');
-    add.className = 'add-btn';
-    add.textContent = '+ Post hinzufügen';
-    add.onclick = () => openAddPostModal(key);
-    col.appendChild(add);
-    grid.appendChild(col);
-  });
-}
-
-function changeWeek(dir) {
-  if (dir === 0) weekOffset = 0;
-  else weekOffset += dir;
-  renderCalendar();
-}
-
-/* ─── SLOT MODAL ─── */
-function openSlotModal(post, key, idx, defsLen) {
-  document.getElementById('slot-modal-title').textContent = `${post.platform} · ${post.format}`;
-  const sc = post.status === 'published' ? 's-published' : post.status === 'ready' ? 's-ready' : 's-draft';
-  const sl = post.status === 'published' ? 'Publiziert' : post.status === 'ready' ? 'Bereit' : 'Entwurf';
-  const text = post.full || post.text;
-  document.getElementById('slot-modal-body').innerHTML = `
+/* ── MODALS ── */
+function openSlotModal(post,key,idx){
+  const sc=post.status==='published'?'s-published':post.status==='ready'?'s-ready':'s-draft';
+  const sl=post.status==='published'?'Publiziert':post.status==='ready'?'Bereit':'Entwurf';
+  const text=post.full||post.text;
+  document.getElementById('slot-title').textContent=`${post.platform} · ${post.format}${post.time?' · '+post.time:''}`;
+  document.getElementById('slot-body').innerHTML=`
+    <div style="margin-bottom:12px"><span class="status-pill ${sc}">${sl}</span></div>
+    <div style="background:var(--bg);border-radius:9px;padding:14px;font-size:13px;line-height:1.75;white-space:pre-wrap;margin-bottom:14px;border:1px solid #eee">${text}</div>
     <div style="margin-bottom:14px">
-      <span class="status-pill ${sc}">${sl}</span>
+      <label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:5px">Uhrzeit</label>
+      <input type="time" id="slot-time" value="${post.time||''}" style="padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-family:var(--font);font-size:13px;width:100%">
     </div>
-    <div style="background:var(--bg);border-radius:9px;padding:14px;font-size:13px;line-height:1.75;white-space:pre-wrap;margin-bottom:16px;border:1px solid #eee">${text}</div>
+    <div style="margin-bottom:14px">
+      <label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:5px">Status</label>
+      <select id="slot-status" style="padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-family:var(--font);font-size:13px">
+        <option value="draft" ${post.status==='draft'?'selected':''}>Entwurf</option>
+        <option value="ready" ${post.status==='ready'?'selected':''}>Bereit</option>
+        <option value="published" ${post.status==='published'?'selected':''}>Publiziert</option>
+      </select>
+    </div>
     <div class="action-row">
       <button class="btn-sm primary" onclick="navigator.clipboard.writeText(${JSON.stringify(text)}).then(()=>showToast('Kopiert ✓'))">⎘ Kopieren</button>
-      ${idx >= defsLen ? `<button class="btn-sm" onclick="deletePost('${key}',${idx - defsLen});closeSlotModal()">Löschen</button>` : ''}
+      <button class="btn-sm" onclick="updatePostStatus('${key}',${idx},document.getElementById('slot-status').value)">Speichern</button>
+      <button class="btn-sm" style="color:#c0392b;border-color:#c0392b" onclick="deletePost('${key}',${idx})">Löschen</button>
       <button class="btn-sm" onclick="closeSlotModal()">Schliessen</button>
     </div>`;
-  document.getElementById('slot-modal').style.display = 'flex';
+  document.getElementById('slot-modal').style.display='flex';
 }
-function closeSlotModal(e) {
-  if (!e || e.target === document.getElementById('slot-modal'))
-    document.getElementById('slot-modal').style.display = 'none';
-}
-
-/* ─── ADD POST MODAL ─── */
-function openAddPostModal(key) {
-  currentAddKey = key;
-  document.getElementById('add-modal-body').innerHTML = `
+function closeSlotModal(){document.getElementById('slot-modal').style.display='none';}
+function openAddPostModal(key,dayNum){
+  currentAddKey=key;
+  document.getElementById('add-modal-title').textContent=`Post hinzufügen – ${dayNum}. ${MONTH_NAMES[calMonth]}`;
+  document.getElementById('add-body').innerHTML=`
     <div class="form-row"><label>Plattform</label>
-      <select id="ap-platform"><option>LinkedIn</option><option>Instagram</option><option>Newsletter</option></select></div>
-    <div class="form-row"><label>Format</label>
-      <input type="text" id="ap-format" placeholder="z.B. Thought Leadership, Reel, Story…"></div>
+      <select id="ap-p"><option>LinkedIn</option><option>Instagram</option></select></div>
+    <div class="form-row"><label>Format / Typ</label>
+      <input type="text" id="ap-f" placeholder="z.B. Reel, Member Spotlight, Event…"></div>
     <div class="form-row"><label>Text / Notiz</label>
-      <textarea id="ap-text" style="min-height:80px" placeholder="Inhalt oder Stichwörter…"></textarea></div>
+      <textarea id="ap-t" style="min-height:80px" placeholder="Inhalt oder Stichwörter…"></textarea></div>
+    <div class="form-row"><label>Uhrzeit <span style="font-weight:400;color:#aaa" id="ap-time-hint"></span></label>
+      <input type="time" id="ap-time" value="09:00" style="padding:9px 12px;border:1px solid #ddd;border-radius:8px;font-family:var(--font);font-size:13px;width:100%"></div>
     <div class="form-row"><label>Status</label>
-      <select id="ap-status"><option value="draft">Entwurf</option><option value="ready">Bereit</option><option value="published">Publiziert</option></select></div>
+      <select id="ap-s"><option value="draft">Entwurf</option><option value="ready">Bereit</option><option value="published">Publiziert</option></select></div>
     <div class="action-row" style="margin-top:10px">
       <button class="btn-sm primary" onclick="saveNewPost()" style="flex:1;justify-content:center">Hinzufügen</button>
       <button class="btn-sm" onclick="closeAddModal()">Abbrechen</button>
     </div>`;
-  document.getElementById('add-modal').style.display = 'flex';
-}
-function closeAddModal(e) {
-  if (!e || e.target === document.getElementById('add-modal'))
-    document.getElementById('add-modal').style.display = 'none';
-}
-function saveNewPost() {
-  const p = {
-    platform: document.getElementById('ap-platform').value,
-    format:   document.getElementById('ap-format').value || 'Post',
-    text:     document.getElementById('ap-text').value || '(kein Text)',
-    status:   document.getElementById('ap-status').value
-  };
-  if (!calPosts[currentAddKey]) calPosts[currentAddKey] = [];
-  calPosts[currentAddKey].push(p);
-  savePosts();
-  closeAddModal();
-  renderCalendar();
-  showToast('Post hinzugefügt');
-}
-function deletePost(key, idx) {
-  if (calPosts[key]) {
-    calPosts[key].splice(idx, 1);
-    savePosts();
-    renderCalendar();
-    showToast('Post gelöscht');
+  // Set smart default time based on platform
+  const defTimes={'LinkedIn':'08:30','Instagram':'11:00'};
+  const apPlatEl=document.getElementById('ap-p');
+  const apTimeEl=document.getElementById('ap-time');
+  const apHintEl=document.getElementById('ap-time-hint');
+  if(apPlatEl&&apTimeEl){
+    apPlatEl.onchange=function(){
+      const t=defTimes[this.value]||'09:00';
+      apTimeEl.value=t;
+      if(apHintEl)apHintEl.textContent='(Empfehlung: '+t+')';
+    };
+    const initT=defTimes[apPlatEl.value]||'09:00';
+    apTimeEl.value=initT;
+    if(apHintEl)apHintEl.textContent='(Empfehlung: '+initT+')';
   }
+  document.getElementById('add-modal').style.display='flex';
+}
+function closeAddModal(){document.getElementById('add-modal').style.display='none';}
+function saveNewPost(){
+  const p={platform:document.getElementById('ap-p').value,format:document.getElementById('ap-f').value||'Post',text:document.getElementById('ap-t').value||'(kein Text)',status:document.getElementById('ap-s').value,time:document.getElementById('ap-time').value||''};
+  if(!calPosts[currentAddKey])calPosts[currentAddKey]=[];
+  calPosts[currentAddKey].push(p);savePosts();closeAddModal();renderMonth();showToast('Post hinzugefügt');
+}
+function deletePost(key,idx){if(calPosts[key]){calPosts[key].splice(idx,1);savePosts();closeSlotModal();renderMonth();showToast('Post gelöscht');}}
+function updatePostStatus(key,idx,status){if(calPosts[key]?.[idx]){calPosts[key][idx].status=status;const t=document.getElementById('slot-time');if(t)calPosts[key][idx].time=t.value;savePosts();closeSlotModal();renderMonth();showToast('Gespeichert');}}
+
+/* ── TABS ── */
+function switchMain(name,btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.main-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+  if(name==='calendar')renderMonth();
 }
 
-/* ─── PERSISTENCE ─── */
-function savePosts() {
-  localStorage.setItem('5f_posts', JSON.stringify(calPosts));
-}
+/* ── UTILS ── */
+function savePosts(){localStorage.setItem('5f_posts',JSON.stringify(calPosts));}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 
-/* ─── TOAST ─── */
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2200);
-}
-
-/* ─── INIT ─── */
-updateKeyStatus();
+/* ── INIT ── */
+updateOutput();
 </script>
 </body>
 </html>
