@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The 5th Floor – Social Media Tool</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Aptos:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --teal: #2E7D82;
+    --teal-mid: #3D8E94;
+    --teal-light: #B8D4D6;
+    --black: #1A1A1A;
+    --grey: #E8E8E8;
+    --white: #FFFFFF;
+    --bg: #f4f4f4;
+    --font: 'Aptos', 'Segoe UI', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--black);
+    font-size: 15px;
+    min-height: 100vh;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background: var(--black);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 12px; }
+  .logo-pill {
+    border: 1.5px solid rgba(255,255,255,0.3);
+    border-radius: 100px;
+    padding: 4px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #fff;
+  }
+  .logo-pill span { color: var(--teal-light); }
+  .topbar-sub { font-size: 11px; color: rgba(255,255,255,0.35); letter-spacing: 1.5px; text-transform: uppercase; }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .api-status {
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-weight: 600;
+    letter-spacing: .5px;
+  }
+  .api-status.ok { background: rgba(46,125,130,0.3); color: var(--teal-light); }
+  .api-status.missing { background: rgba(255,100,100,0.2); color: #ff9999; }
+  .btn-key {
+    font-size: 12px;
+    padding: 5px 14px;
+    border-radius: 100px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: none;
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    font-family: var(--font);
+    transition: all .15s;
+  }
+  .btn-key:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
+
+  /* ── TABS ── */
+  .tabs {
+    background: var(--white);
+    border-bottom: 1px solid var(--grey);
+    display: flex;
+    padding: 0 24px;
+  }
+  .tab {
+    padding: 13px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: none;
+    color: #777;
+    font-family: var(--font);
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .tab:hover { color: var(--black); }
+  .tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+
+  /* ── LAYOUT ── */
+  .page { max-width: 1100px; margin: 0 auto; padding: 28px 24px; }
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--white);
+    border-radius: 14px;
+    border: 1px solid #eee;
+    padding: 22px;
+  }
+  .card-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  /* ── GENERATOR ── */
+  .gen-grid { display: grid; grid-template-columns: 360px 1fr; gap: 20px; }
+
+  .form-row { margin-bottom: 14px; }
+  .form-row label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 5px;
+    letter-spacing: .3px;
+  }
+  .form-row select,
+  .form-row textarea,
+  .form-row input[type="text"] {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: var(--font);
+    font-size: 13px;
+    color: var(--black);
+    background: var(--white);
+    transition: border-color .15s;
+    outline: none;
+  }
+  .form-row select:focus,
+  .form-row textarea:focus,
+  .form-row input[type="text"]:focus { border-color: var(--teal); }
+  .form-row textarea { resize: vertical; min-height: 75px; }
+
+  .btn-generate {
+    width: 100%;
+    padding: 12px;
+    background: var(--teal);
+    color: #fff;
+    border: none;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: var(--font);
+    letter-spacing: .5px;
+    transition: opacity .15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-generate:hover { opacity: .88; }
+  .btn-generate:disabled { opacity: .45; cursor: not-allowed; }
+
+  .output-box {
+    min-height: 160px;
+    background: var(--bg);
+    border-radius: 9px;
+    padding: 16px;
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--black);
+    white-space: pre-wrap;
+    margin-bottom: 12px;
+    border: 1px solid #eee;
+  }
+  .output-placeholder { color: #aaa; font-style: italic; font-size: 13px; }
+
+  .char-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .char-count { font-size: 11px; color: #999; }
+  .char-warn { color: #e67e22; font-weight: 600; }
+
+  .hashtag-section { margin-bottom: 14px; }
+  .hashtag-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #888; margin-bottom: 6px; }
+  .hashtag-box {
+    background: #e8f4f5;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--teal);
+    line-height: 1.8;
+  }
+
+  .action-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn-sm {
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    font-family: var(--font);
+    border: 1px solid #ddd;
+    background: var(--white);
+    color: var(--black);
+    transition: background .12s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-sm:hover { background: var(--bg); }
+  .btn-sm.primary { background: var(--teal); color: #fff; border-color: var(--teal); }
+  .btn-sm.primary:hover { opacity: .88; }
+
+  /* ── CALENDAR ── */
+  .cal-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .cal-title { font-size: 16px; font-weight: 600; color: var(--black); }
+  .week-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+  .day-head {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--teal);
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--teal-light);
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+  .cal-slot {
+    background: var(--white);
+    border: 1px solid #eee;
+    border-left: 3px solid var(--teal);
+    border-radius: 9px;
+    padding: 11px 12px;
+    margin-bottom: 9px;
+    cursor: pointer;
+    transition: border-color .12s, box-shadow .12s;
+  }
+  .cal-slot:hover { box-shadow: 0 2px 10px rgba(0,0,0,.08); }
+  .cal-slot.linkedin { border-left-color: var(--black); }
+  .cal-slot .sp { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--teal); margin-bottom: 3px; }
+  .cal-slot.linkedin .sp { color: var(--black); }
+  .cal-slot .sf { font-size: 12px; font-weight: 600; color: var(--black); margin-bottom: 3px; }
+  .cal-slot .st { font-size: 11px; color: #888; line-height: 1.45; }
+  .status-pill {
+    display: inline-block;
+    margin-top: 7px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    padding: 2px 9px;
+    border-radius: 100px;
+  }
+  .s-draft { background: #f0f0f0; color: #888; }
+  .s-ready { background: #e8f4f5; color: var(--teal); }
+  .s-published { background: #e9f7ef; color: #27ae60; }
+
+  .add-btn {
+    width: 100%;
+    padding: 10px;
+    border: 1.5px dashed #ccc;
+    border-radius: 9px;
+    background: none;
+    cursor: pointer;
+    font-size: 12px;
+    color: #aaa;
+    font-family: var(--font);
+    transition: all .15s;
+  }
+  .add-btn:hover { border-color: var(--teal); color: var(--teal); }
+
+  /* ── MODAL ── */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+  }
+  .modal {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 26px;
+    width: 500px;
+    max-width: 95vw;
+    max-height: 88vh;
+    overflow-y: auto;
+  }
+  .modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .modal-head h3 { font-size: 15px; font-weight: 600; }
+  .btn-close {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: #888;
+    line-height: 1;
+    padding: 0;
+  }
+
+  /* ── API KEY MODAL ── */
+  .api-info {
+    background: #e8f4f5;
+    border-radius: 9px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #2a6a6e;
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+  .api-info a { color: var(--teal); font-weight: 600; }
+
+  /* ── SPINNER ── */
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--black);
+    color: #fff;
+    padding: 11px 20px;
+    border-radius: 9px;
+    font-size: 13px;
+    z-index: 300;
+    opacity: 0;
+    transition: opacity .2s;
+    pointer-events: none;
+    font-family: var(--font);
+  }
+  #toast.show { opacity: 1; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    .gen-grid { grid-template-columns: 1fr; }
+    .week-grid { grid-template-columns: 1fr 1fr; }
+    .topbar-sub { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo-pill">THE <span>5TH</span> FLOOR</div>
+    <div class="topbar-sub">Social Media Tool</div>
+  </div>
+  <div class="topbar-right">
+    <span class="api-status missing" id="api-status">Kein API-Key</span>
+    <button class="btn-key" onclick="openKeyModal()">⚙ API-Key</button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('generator', this)">
+    ✦ Post Generator
+  </button>
+  <button class="tab" onclick="switchTab('calendar', this)">
+    ◫ Redaktionsplan
+  </button>
+</div>
+
+<!-- ── GENERATOR ── -->
+<div id="tab-generator" class="view active">
+  <div class="page">
+    <div class="gen-grid">
+
+      <!-- Left: Config -->
+      <div class="card">
+        <div class="card-label">Post konfigurieren</div>
+
+        <div class="form-row">
+          <label>Kanal</label>
+          <select id="platform">
+            <option value="linkedin">LinkedIn</option>
+            <option value="instagram">Instagram</option>
+            <option value="newsletter">Newsletter</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label>Content-Säule</label>
+          <select id="pillar">
+            <option value="community">Community & People</option>
+            <option value="thought">Thought Leadership</option>
+            <option value="space">Space & Infrastructure</option>
+            <option value="events">Events & Networking</option>
+            <option value="upsell">Offers & Upsell</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label>Sprache</label>
+          <select id="language">
+            <option value="de">Deutsch</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label>Format</label>
+          <select id="format">
+            <option value="text">Text-Post</option>
+            <option value="carousel">Karussell-Intro</option>
+            <option value="reel">Reel-Caption</option>
+            <option value="story">Story-Teaser</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label>Thema / Kontext <span style="font-weight:400;color:#aaa">(optional)</span></label>
+          <textarea id="topic" placeholder="z.B. «Neues Lab im Klybeck eröffnet», «Event am 15. Juli», «Member Spotlight: BioStartup XY»"></textarea>
+        </div>
+
+        <button class="btn-generate" id="gen-btn" onclick="generatePost()">
+          <span id="gen-icon">✦</span>
+          <span id="gen-label">Post generieren</span>
+        </button>
+      </div>
+
+      <!-- Right: Output -->
+      <div class="card">
+        <div class="card-label">Generierter Post</div>
+
+        <div class="output-box" id="output">
+          <span class="output-placeholder">Post erscheint hier nach der Generierung…</span>
+        </div>
+
+        <div class="char-bar">
+          <span class="char-count" id="char-count"></span>
+        </div>
+
+        <div class="hashtag-section" id="hashtag-section" style="display:none">
+          <div class="hashtag-label">Hashtag-Vorschläge</div>
+          <div class="hashtag-box" id="hashtags"></div>
+        </div>
+
+        <div class="action-row" id="action-row" style="display:none">
+          <button class="btn-sm primary" onclick="copyPost()">⎘ Kopieren</button>
+          <button class="btn-sm" onclick="addToCalendar()">+ In Kalender</button>
+          <button class="btn-sm" onclick="generatePost()">↺ Neu generieren</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── CALENDAR ── -->
+<div id="tab-calendar" class="view">
+  <div class="page">
+    <div class="cal-topbar">
+      <div class="cal-title" id="cal-label"></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-sm" onclick="changeWeek(-1)">← Zurück</button>
+        <button class="btn-sm" onclick="changeWeek(0)">Heute</button>
+        <button class="btn-sm" onclick="changeWeek(1)">Vor →</button>
+      </div>
+    </div>
+    <div class="week-grid" id="cal-grid"></div>
+  </div>
+</div>
+
+<!-- ── API KEY MODAL ── -->
+<div class="overlay" id="key-modal" style="display:none" onclick="closeKeyModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <h3>Anthropic API-Key</h3>
+      <button class="btn-close" onclick="closeKeyModal()">×</button>
+    </div>
+    <div class="api-info">
+      Der API-Key wird <strong>ausschliesslich lokal</strong> in deinem Browser gespeichert (localStorage) und verlässt dieses Gerät nicht.<br><br>
+      Key erstellen: <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API Keys → Create Key
+    </div>
+    <div class="form-row">
+      <label>API-Key (sk-ant-...)</label>
+      <input type="text" id="key-input" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false">
+    </div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btn-sm primary" onclick="saveKey()" style="flex:1;justify-content:center">Speichern</button>
+      <button class="btn-sm" onclick="clearKey()" style="color:#c0392b;border-color:#c0392b">Löschen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── SLOT MODAL ── -->
+<div class="overlay" id="slot-modal" style="display:none" onclick="closeSlotModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <h3 id="slot-modal-title">Post</h3>
+      <button class="btn-close" onclick="closeSlotModal()">×</button>
+    </div>
+    <div id="slot-modal-body"></div>
+  </div>
+</div>
+
+<!-- ── ADD POST MODAL ── -->
+<div class="overlay" id="add-modal" style="display:none" onclick="closeAddModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <h3>Post hinzufügen</h3>
+      <button class="btn-close" onclick="closeAddModal()">×</button>
+    </div>
+    <div id="add-modal-body"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ─── STATE ─── */
+const DAYS = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag'];
+let weekOffset = 0;
+let calPosts = JSON.parse(localStorage.getItem('5f_posts') || '{}');
+let lastPost = '';
+let lastHashtags = '';
+let currentAddKey = '';
+
+const PILLAR_LABELS = {
+  community: 'Community & People',
+  thought: 'Thought Leadership',
+  space: 'Space & Infrastructure',
+  events: 'Events & Networking',
+  upsell: 'Offers & Upsell'
+};
+
+const DEFAULT_WEEK = [
+  { day:0, platform:'LinkedIn',  format:'Thought Leadership', text:'Life Sciences Basel: was die Region 2026 bewegt.',      status:'ready' },
+  { day:1, platform:'Instagram', format:'Space Visual',        text:'Frischer Blick auf unser Lab im Klybeck.',             status:'draft' },
+  { day:2, platform:'LinkedIn',  format:'Member Spotlight',    text:'Founder-Portrait: [Name] über seinen Weg.',           status:'draft' },
+  { day:2, platform:'Instagram', format:'Reel',                text:'30s Behind the Scenes – Community.',                  status:'draft' },
+  { day:3, platform:'LinkedIn',  format:'Event',               text:'Save the date: Networking Night 15. Juli.',           status:'ready' },
+  { day:4, platform:'Instagram', format:'Community',           text:'Wochenabschluss im 5th Floor.',                       status:'published' },
+];
+
+/* ─── API KEY ─── */
+function getKey() { return localStorage.getItem('5f_apikey') || ''; }
+function updateKeyStatus() {
+  const k = getKey();
+  const el = document.getElementById('api-status');
+  if (k) { el.textContent = 'API-Key aktiv'; el.className = 'api-status ok'; }
+  else    { el.textContent = 'Kein API-Key';  el.className = 'api-status missing'; }
+}
+function openKeyModal() {
+  document.getElementById('key-input').value = getKey();
+  document.getElementById('key-modal').style.display = 'flex';
+}
+function closeKeyModal(e) {
+  if (!e || e.target === document.getElementById('key-modal'))
+    document.getElementById('key-modal').style.display = 'none';
+}
+function saveKey() {
+  const v = document.getElementById('key-input').value.trim();
+  if (!v) { showToast('Bitte Key eingeben'); return; }
+  localStorage.setItem('5f_apikey', v);
+  updateKeyStatus();
+  document.getElementById('key-modal').style.display = 'none';
+  showToast('API-Key gespeichert');
+}
+function clearKey() {
+  localStorage.removeItem('5f_apikey');
+  document.getElementById('key-input').value = '';
+  updateKeyStatus();
+  showToast('API-Key gelöscht');
+}
+
+/* ─── TABS ─── */
+function switchTab(name, btn) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'calendar') renderCalendar();
+}
+
+/* ─── GENERATOR ─── */
+async function generatePost() {
+  const key = getKey();
+  if (!key) { openKeyModal(); return; }
+
+  const platform = document.getElementById('platform').value;
+  const pillar   = document.getElementById('pillar').value;
+  const language = document.getElementById('language').value;
+  const format   = document.getElementById('format').value;
+  const topic    = document.getElementById('topic').value.trim();
+
+  const btn       = document.getElementById('gen-btn');
+  const labelEl   = document.getElementById('gen-label');
+  const iconEl    = document.getElementById('gen-icon');
+  const outputEl  = document.getElementById('output');
+
+  btn.disabled = true;
+  iconEl.outerHTML = '<span class="spinner" id="gen-icon"></span>';
+  labelEl.textContent = 'Generiere…';
+  outputEl.innerHTML = '<span class="output-placeholder">KI schreibt…</span>';
+  document.getElementById('hashtag-section').style.display = 'none';
+  document.getElementById('action-row').style.display = 'none';
+  document.getElementById('char-count').textContent = '';
+
+  const charLimits = { linkedin: 1300, instagram: 2200, newsletter: 600 };
+  const charLimit  = charLimits[platform];
+
+  const formatLabels = {
+    text: 'Text-Post',
+    carousel: 'Karussell-Intro (erster Slide)',
+    reel: 'Reel-Caption',
+    story: 'Story-Teaser'
+  };
+
+  const systemPrompt = `Du bist der Social Media Manager von The 5th Floor – einem professionellen Coworking- und Pro-Working-Space in Basel (Klybeck & Muttenz) und Orlando, USA.
+
+Marke: professionell, B2B, ambitioniert, unternehmerisch. Slogan: "By Entrepreneurs, For Entrepreneurs."
+Ton: direkt, substanziell, keine Floskeln, keine übertriebenen Emojis (maximal 1 pro Post, nur wenn wirklich sinnvoll).
+Sprache: ${language === 'de' ? 'Deutsch' : 'English'}. Kein Sprachmix innerhalb eines Posts.
+Zielgruppe: Founders, Scale-ups, Life Sciences, MedTech, Corporate Innovatoren in der Schweiz/DACH und USA.
+
+Format: Schreibe zuerst den fertigen Post-Text. Dann, nach einer Zeile mit genau "---", liste 3–7 passende Hashtags.
+Kein Preamble. Keine Erklärungen. Nur Post + "---" + Hashtags.`;
+
+  const userPrompt = `Kanal: ${{linkedin:'LinkedIn',instagram:'Instagram',newsletter:'Newsletter'}[platform]}
+Content-Säule: ${PILLAR_LABELS[pillar]}
+Format: ${formatLabels[format]}
+Maximale Zeichenanzahl: ${charLimit}
+${topic ? 'Thema/Kontext: ' + topic : 'Kein spezifisches Thema – wähle ein passendes Thema für diese Säule.'}
+
+Schreibe einen fertigen, direkt verwendbaren Post.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }]
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || 'API-Fehler ' + res.status);
+    }
+
+    const data = await res.json();
+    const full = data.content?.find(b => b.type === 'text')?.text || '';
+    const parts = full.split(/^---$/m);
+    lastPost      = parts[0].trim();
+    lastHashtags  = parts[1] ? parts[1].trim() : '';
+
+    outputEl.textContent = lastPost;
+
+    const len = lastPost.length;
+    const countEl = document.getElementById('char-count');
+    countEl.textContent = `${len} / ${charLimit} Zeichen`;
+    countEl.className = len > charLimit ? 'char-count char-warn' : 'char-count';
+
+    if (lastHashtags) {
+      document.getElementById('hashtags').textContent = lastHashtags;
+      document.getElementById('hashtag-section').style.display = 'block';
+    }
+    document.getElementById('action-row').style.display = 'flex';
+
+  } catch (err) {
+    outputEl.innerHTML = `<span class="output-placeholder">Fehler: ${err.message}</span>`;
+    showToast('Fehler beim Generieren');
+  }
+
+  btn.disabled = false;
+  document.getElementById('gen-icon').outerHTML = '<span id="gen-icon">✦</span>';
+  labelEl.textContent = 'Post generieren';
+}
+
+function copyPost() {
+  if (!lastPost) return;
+  const full = lastPost + (lastHashtags ? '\n\n' + lastHashtags : '');
+  navigator.clipboard.writeText(full).then(() => showToast('Post kopiert ✓'));
+}
+
+function addToCalendar() {
+  if (!lastPost) return;
+  const plat = { linkedin:'LinkedIn', instagram:'Instagram', newsletter:'Newsletter' }[document.getElementById('platform').value];
+  const fmt  = { text:'Text-Post', carousel:'Karussell', reel:'Reel', story:'Story' }[document.getElementById('format').value];
+  const today = new Date().toISOString().split('T')[0];
+  if (!calPosts[today]) calPosts[today] = [];
+  calPosts[today].push({ platform: plat, format: fmt, text: lastPost.slice(0, 90) + (lastPost.length > 90 ? '…' : ''), status: 'draft', full: lastPost });
+  savePosts();
+  showToast('In Redaktionsplan gespeichert');
+}
+
+/* ─── CALENDAR ─── */
+function getWeekDates(offset) {
+  const now  = new Date();
+  const dow  = now.getDay();
+  const mon  = new Date(now);
+  mon.setDate(now.getDate() - (dow === 0 ? 6 : dow - 1) + offset * 7);
+  return Array.from({ length: 5 }, (_, i) => {
+    const d = new Date(mon);
+    d.setDate(mon.getDate() + i);
+    return d;
+  });
+}
+
+function renderCalendar() {
+  const dates = getWeekDates(weekOffset);
+  const fmt   = d => `${d.getDate()}.${d.getMonth() + 1}.`;
+  document.getElementById('cal-label').textContent =
+    `${fmt(dates[0])} – ${fmt(dates[4])} ${dates[0].getFullYear()}`;
+
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+
+  dates.forEach((date, i) => {
+    const col = document.createElement('div');
+    col.innerHTML = `<div class="day-head">${DAYS[i]}<br><span style="font-weight:400;letter-spacing:0;font-size:11px">${fmt(date)}</span></div>`;
+
+    const key   = date.toISOString().split('T')[0];
+    const saved = calPosts[key] || [];
+    const defs  = weekOffset === 0 ? DEFAULT_WEEK.filter(p => p.day === i) : [];
+    [...defs, ...saved].forEach((p, pi) => {
+      const slot = document.createElement('div');
+      const sc   = p.status === 'published' ? 's-published' : p.status === 'ready' ? 's-ready' : 's-draft';
+      const sl   = p.status === 'published' ? 'Publiziert' : p.status === 'ready' ? 'Bereit' : 'Entwurf';
+      slot.className = `cal-slot ${p.platform === 'LinkedIn' ? 'linkedin' : ''}`;
+      slot.innerHTML = `<div class="sp">${p.platform}</div><div class="sf">${p.format}</div><div class="st">${p.text}</div><span class="status-pill ${sc}">${sl}</span>`;
+      slot.onclick = () => openSlotModal(p, key, pi, defs.length);
+      col.appendChild(slot);
+    });
+
+    const add = document.createElement('button');
+    add.className = 'add-btn';
+    add.textContent = '+ Post hinzufügen';
+    add.onclick = () => openAddPostModal(key);
+    col.appendChild(add);
+    grid.appendChild(col);
+  });
+}
+
+function changeWeek(dir) {
+  if (dir === 0) weekOffset = 0;
+  else weekOffset += dir;
+  renderCalendar();
+}
+
+/* ─── SLOT MODAL ─── */
+function openSlotModal(post, key, idx, defsLen) {
+  document.getElementById('slot-modal-title').textContent = `${post.platform} · ${post.format}`;
+  const sc = post.status === 'published' ? 's-published' : post.status === 'ready' ? 's-ready' : 's-draft';
+  const sl = post.status === 'published' ? 'Publiziert' : post.status === 'ready' ? 'Bereit' : 'Entwurf';
+  const text = post.full || post.text;
+  document.getElementById('slot-modal-body').innerHTML = `
+    <div style="margin-bottom:14px">
+      <span class="status-pill ${sc}">${sl}</span>
+    </div>
+    <div style="background:var(--bg);border-radius:9px;padding:14px;font-size:13px;line-height:1.75;white-space:pre-wrap;margin-bottom:16px;border:1px solid #eee">${text}</div>
+    <div class="action-row">
+      <button class="btn-sm primary" onclick="navigator.clipboard.writeText(${JSON.stringify(text)}).then(()=>showToast('Kopiert ✓'))">⎘ Kopieren</button>
+      ${idx >= defsLen ? `<button class="btn-sm" onclick="deletePost('${key}',${idx - defsLen});closeSlotModal()">Löschen</button>` : ''}
+      <button class="btn-sm" onclick="closeSlotModal()">Schliessen</button>
+    </div>`;
+  document.getElementById('slot-modal').style.display = 'flex';
+}
+function closeSlotModal(e) {
+  if (!e || e.target === document.getElementById('slot-modal'))
+    document.getElementById('slot-modal').style.display = 'none';
+}
+
+/* ─── ADD POST MODAL ─── */
+function openAddPostModal(key) {
+  currentAddKey = key;
+  document.getElementById('add-modal-body').innerHTML = `
+    <div class="form-row"><label>Plattform</label>
+      <select id="ap-platform"><option>LinkedIn</option><option>Instagram</option><option>Newsletter</option></select></div>
+    <div class="form-row"><label>Format</label>
+      <input type="text" id="ap-format" placeholder="z.B. Thought Leadership, Reel, Story…"></div>
+    <div class="form-row"><label>Text / Notiz</label>
+      <textarea id="ap-text" style="min-height:80px" placeholder="Inhalt oder Stichwörter…"></textarea></div>
+    <div class="form-row"><label>Status</label>
+      <select id="ap-status"><option value="draft">Entwurf</option><option value="ready">Bereit</option><option value="published">Publiziert</option></select></div>
+    <div class="action-row" style="margin-top:10px">
+      <button class="btn-sm primary" onclick="saveNewPost()" style="flex:1;justify-content:center">Hinzufügen</button>
+      <button class="btn-sm" onclick="closeAddModal()">Abbrechen</button>
+    </div>`;
+  document.getElementById('add-modal').style.display = 'flex';
+}
+function closeAddModal(e) {
+  if (!e || e.target === document.getElementById('add-modal'))
+    document.getElementById('add-modal').style.display = 'none';
+}
+function saveNewPost() {
+  const p = {
+    platform: document.getElementById('ap-platform').value,
+    format:   document.getElementById('ap-format').value || 'Post',
+    text:     document.getElementById('ap-text').value || '(kein Text)',
+    status:   document.getElementById('ap-status').value
+  };
+  if (!calPosts[currentAddKey]) calPosts[currentAddKey] = [];
+  calPosts[currentAddKey].push(p);
+  savePosts();
+  closeAddModal();
+  renderCalendar();
+  showToast('Post hinzugefügt');
+}
+function deletePost(key, idx) {
+  if (calPosts[key]) {
+    calPosts[key].splice(idx, 1);
+    savePosts();
+    renderCalendar();
+    showToast('Post gelöscht');
+  }
+}
+
+/* ─── PERSISTENCE ─── */
+function savePosts() {
+  localStorage.setItem('5f_posts', JSON.stringify(calPosts));
+}
+
+/* ─── TOAST ─── */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ─── INIT ─── */
+updateKeyStatus();
+</script>
+</body>
+</html>
